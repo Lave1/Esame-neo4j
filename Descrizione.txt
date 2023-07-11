@@ -1,0 +1,2 @@
+creazione del file python im cui creiamo le i nodi per ogni sentiero in cui per ogni sentiero scriviamo : 
+la distanza, tempo di percorrenza, difficolta, se il sentiero è percoccibile in bici o no   
