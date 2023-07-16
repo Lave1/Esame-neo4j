@@ -1,7 +1,11 @@
 from neo4j import GraphDatabase
 
-def create_nodes_if_not_exists():
+uri = "neo4j+s://ece1266a.databases.neo4j.io"
+user = "neo4j"
+password = "qPxdTyg5M_3K68J_fCWvrm6DAwxMZS8hHVxTbVGSJ94"
+driver = GraphDatabase.driver(uri, auth=(user, password))
 
+def create_nodes_if_not_exists():
     session = driver.session()
 
     # Controlla che esista il nodo 1
@@ -14,24 +18,24 @@ def create_nodes_if_not_exists():
         print("il nodo partenza 1 esiste gia:", start_node)
     else:  
         # Crea il nodo 1
-        query_create_start_node = "CREATE (s1:start {name: 'partena 1'}) RETURN s1"
+        query_create_start_node = "CREATE (s1:start {name: 'partenza 1'}) RETURN s1"
         result_create_start_node = session.run(query_create_start_node)
         start_node = result_create_start_node.single()["s1"]
         print("nodo partenza 1 creato:", start_node)
 
-    # controlla che esista il nodo 2
-    query_check_shelter_node = "MATCH (m:shelter {name: 'rifugio 1'}) RETURN m1"
+    # Controlla che esista il nodo 2
+    query_check_shelter_node = "MATCH (m:shelter {name: 'rifugio 1'}) RETURN m"
     result_shelter_node = session.run(query_check_shelter_node)
     existing_shelter_node = result_shelter_node.single()
 
     if existing_shelter_node:
-        shelter_node = existing_shelter_node["r1"]
-        print("", shelter_node)
+        shelter_node = existing_shelter_node["m"]
+        print("il nodo rifugio 1 esiste gia:", shelter_node)
     else:
         # Crea il nodo 2
-        query_create_shelter_node = "CREATE (r1:shelter {name: 'rifugio 1'}) RETURN r1"
+        query_create_shelter_node = "CREATE (m:shelter {name: 'rifugio 1'}) RETURN m"
         result_create_shelter_node = session.run(query_create_shelter_node)
-        shelter_node = result_create_shelter_node.single()["m1"]
+        shelter_node = result_create_shelter_node.single()["m"]
         print("il nodo rifugio 1 creato:", shelter_node)
 
  # Controlla che esista il nodo 3
@@ -55,7 +59,7 @@ def create_nodes_if_not_exists():
     existing_shelter_node = result_shelter_node.single()
 
     if existing_shelter_node:
-        shelter_node = existing_shelter_node["r2"]
+        shelter_node = existing_shelter_node["s2"]
         print("il nodo fifugio 2 esite gia:", shelter_node)
     else:
         # Crea il nodo 4
