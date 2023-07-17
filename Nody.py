@@ -131,7 +131,7 @@ def create_nodes_if_not_exists():
     session.close()
 
 # Richiamo la funzione per creare i nodi se non esistono gia 
-create_nodes_if_not_exists()
+#create_nodes_if_not_exists()
 
 # Close the driver at the end of your program
 driver.close()
