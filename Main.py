@@ -16,9 +16,9 @@ def check_connection():
     record = result.single()
     
     if record:
-        print("Connected to Neo4j server.")
+        print("Connesso al server di Neo4j.")
     else:
-        print("Failed to connect to Neo4j server.")
+        print("Connessione fallita al server di Neo4j.")
     
     session.close()
 
