@@ -9,15 +9,15 @@ driver = GraphDatabase.driver(uri, auth=(user, password))
 
 def check_connection():
     session = driver.session()
-    
+
     result = session.run("RETURN 1")
     record = result.single()
-    
+
     if record:
         print("Connesso al server di Neo4j.")
     else:
         print("Connessione fallita al server di Neo4j.")
-    
+
     session.close()
 
 check_connection()
@@ -31,99 +31,110 @@ def create_relationships():
     query_create_relationships = """
     MATCH (s1:start {name: 'partenza 1'}),
           (l:lake {name: 'lago'})
-    CREATE (s1)-[:facile{distanza:'2km', percorribilità_in_bici: 'si', tempo: 1,30 h }]->(l)
+    CREATE (s1)-[:facile{distanza:'2km', percorribilità_in_bici: 'si', tempo: '1h 30m'}]->(l)
     """
+
     session.run(query_create_relationships)
     print("Collegamento 'facile' tra partenza 1 e lago creato con informazioni aggiuntive.")
 
     query_create_relationships = """
     MATCH (s1:start {name: 'partenza 1'}),
           (p1:peak {name: 'picco 1'})
-    CREATE (s1)-[:difficile{distanza:'4km', percorribilità_in_bici: 'no', tempo: 2h }]->(l)
+    CREATE (s1)-[:difficile{distanza:'4km', percorribilità_in_bici: 'no', tempo: '2h'}]->(p1)
     """
+
     session.run(query_create_relationships)
-    print("Collegamento 'facile' tra partenza 1 e lago creato con informazioni aggiuntive.")
+    print("Collegamento 'difficile' tra partenza 1 e picco 1 creato con informazioni aggiuntive.")
 
     query_create_relationships = """
     MATCH (p1:peak {name: 'picco 1'}),
           (l:lake {name: 'lago'})
-    CREATE (s1)-[:difficile{distanza:'2km', percorribilità_in_bici: 'no', tempo: 1,30h }]->(l)
+    CREATE (p1)-[:difficile{distanza:'2km', percorribilità_in_bici: 'no', tempo: '1h 30m'}]->(l)
     """
+
     session.run(query_create_relationships)
-    print("Collegamento 'facile' tra partenza 1 e lago creato con informazioni aggiuntive.")
+    print("Collegamento 'difficile' tra picco 1 e lago creato con informazioni aggiuntive.")
 
     query_create_relationships = """
     MATCH (l:lake {name: 'lago'}),
           (r1:shelter {name: 'rifugio 1'})
-    CREATE (s1)-[:facile{distanza:'3km', percorribilità_in_bici: 'si', tempo: 2,30h }]->(l)
+    CREATE (l)-[:facile{distanza:'3km', percorribilità_in_bici: 'si', tempo: '2h 30m'}]->(r1)
     """
+
     session.run(query_create_relationships)
-    print("Collegamento 'facile' tra partenza 1 e lago creato con informazioni aggiuntive.")
+    print("Collegamento 'facile' tra lago e rifugio 1 creato con informazioni aggiuntive.")
 
     query_create_relationships = """
     MATCH (p1:peak {name: 'picco 1'}),
-          (r2:shelter {name: 'rifugio 2'})
-    CREATE (s1)-[:facile{distanza:'3km', percorribilità_in_bici: 'si', tempo: 2,30h }]->(l)
+          (r1:shelter {name: 'rifugio 1'})
+    CREATE (p1)-[:facile{distanza:'3km', percorribilità_in_bici: 'si', tempo: '2h 30m'}]->(r1)
     """
+
     session.run(query_create_relationships)
-    print("Collegamento 'facile' tra partenza 1 e lago creato con informazioni aggiuntive.")
+    print("Collegamento 'facile' tra picco 1 e rifugio 2 creato con informazioni aggiuntive.")
 
     query_create_relationships = """
     MATCH (p1:peak {name: 'picco 1'}),
           (p2:peak {name: 'picco 2'})
-    CREATE (s1)-[:difficile{distanza:'6km', percorribilità_in_bici: 'no', tempo: 3h }]->(l)
+    CREATE (p1)-[:difficile{distanza:'6km', percorribilità_in_bici: 'no', tempo: '3h'}]->(p2)
     """
+
     session.run(query_create_relationships)
-    print("Collegamento 'facile' tra partenza 1 e lago creato con informazioni aggiuntive.")
+    print("Collegamento 'difficile' tra picco 1 e picco 2 creato con informazioni aggiuntive.")
 
     query_create_relationships = """
     MATCH (r1:shelter {name: 'rifugio 1'}),
           (p2:peak {name: 'picco 2'})
-    CREATE (s1)-[:difficile{distanza:'3km', percorribilità_in_bici: 'no', tempo: 1,30h }]->(l)
+    CREATE (r1)-[:difficile{distanza:'3km', percorribilità_in_bici: 'no', tempo: '1h 30m'}]->(p2)
     """
+
     session.run(query_create_relationships)
-    print("Collegamento 'facile' tra partenza 1 e lago creato con informazioni aggiuntive.")
+    print("Collegamento 'difficile' tra rifugio 1 e picco 2 creato con informazioni aggiuntive.")
 
     query_create_relationships = """
     MATCH (r1:shelter {name: 'rifugio 1'}),
           (s:trail {name: 'sentiero'})
-    CREATE (s1)-[:facile{distanza:'3km', percorribilità_in_bici: 'si', tempo: 2,30h }]->(l)
+    CREATE (r1)-[:facile{distanza:'3km', percorribilità_in_bici: 'si', tempo: '2h 30m'}]->(s)
     """
+
     session.run(query_create_relationships)
-    print("Collegamento 'facile' tra partenza 1 e lago creato con informazioni aggiuntive.")
+    print("Collegamento 'facile' tra rifugio 1 e sentiero creato con informazioni aggiuntive.")
 
     query_create_relationships = """
     MATCH (p2:peak {name: 'picco 2'}),
           (s:trail {name: 'sentiero'})
-    CREATE (s1)-[:difficile{distanza:'2km', percorribilità_in_bici: 'no', tempo: 1,30h }]->(l)
+    CREATE (p2)-[:difficile{distanza:'2km', percorribilità_in_bici: 'no', tempo: '1h 30m'}]->(s)
     """
+
     session.run(query_create_relationships)
-    print("Collegamento 'facile' tra partenza 1 e lago creato con informazioni aggiuntive.")
+    print("Collegamento 'difficile' tra picco 2 e sentiero creato con informazioni aggiuntive.")
 
     query_create_relationships = """
-    MATCH  (s:trail {name: 'sentiero'}),
+    MATCH (s:trail {name: 'sentiero'}),
           (r2:shelter {name: 'rifugio 2'})
-    CREATE (s1)-[:facile{distanza:'2km', percorribilità_in_bici: 'si', tempo: 2h }]->(l)
+    CREATE (s)-[:facile{distanza:'2km', percorribilità_in_bici: 'si', tempo: '2h'}]->(r2)
     """
+
     session.run(query_create_relationships)
-    print("Collegamento 'facile' tra partenza 1 e lago creato con informazioni aggiuntive.")
+    print("Collegamento 'facile' tra sentiero e rifugio 2 creato con informazioni aggiuntive.")
 
     query_create_relationships = """
-    MATCH  (s:trail {name: 'sentiero'}),
+    MATCH (s:trail {name: 'sentiero'}),
           (s2:start {name: 'partenza 2'})
-    CREATE (s1)-[:facile{distanza:'1km', percorribilità_in_bici: 'si', tempo: 1,30h }]->(l)
+    CREATE (s)-[:facile{distanza:'1km', percorribilità_in_bici: 'si', tempo: '1h 30m'}]->(s2)
     """
+
     session.run(query_create_relationships)
-    print("Collegamento 'facile' tra partenza 1 e lago creato con informazioni aggiuntive.")
+    print("Collegamento 'facile' tra sentiero e partenza 2 creato con informazioni aggiuntive.")
 
     query_create_relationships = """
-    MATCH  (s2:start {name: 'partenza 2'}),
-          (p2:peak {name: 'picco 2'}),
-    CREATE (s1)-[:difficile{distanza:'4km', percorribilità_in_bici: 'no', tempo: 2h }]->(l)
+    MATCH (s2:start {name: 'partenza 2'}),
+          (r2:shelter {name: 'rifugio 2'})
+    CREATE (s2)-[:difficile{distanza:'4km', percorribilità_in_bici: 'no', tempo: '2h'}]->(r2)
     """
-    session.run(query_create_relationships)
-    print("Collegamento 'facile' tra partenza 1 e lago creato con informazioni aggiuntive.")
 
+    session.run(query_create_relationships)
+    print("Collegamento 'difficile' tra partenza 2 e picco 2 creato con informazioni aggiuntive.")
 
     session.close()
 
