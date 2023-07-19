@@ -136,8 +136,108 @@ def create_relationships():
     session.run(query_create_relationships)
     print("Collegamento 'difficile' tra partenza 2 e picco 2 creato con informazioni aggiuntive.")
 
+    
+
+def select_start_node():
+    while True:
+        choice = input("Seleziona il nodo di partenza (1 per partenza 1 o 2 per partenza 2): ")
+        if choice == "1" or choice == "2":
+            if choice == "1":
+                return {"s1": "partenza 1"}
+            else:
+                return {"s2": "partenza 2"}
+        else:
+            print("Scelta non valida. Riprova.")
+
+
+def select_start_node():
+    while True:
+        choice = input("Seleziona il nodo di partenza (1 per partenza 1 o 2 per partenza 2): ")
+        if choice == "1" or choice == "2":
+            if choice == "1":
+                return {"name": "partenza 1", "label": "start"}
+            else:
+                return {"name": "partenza 2", "label": "start"}
+        else:
+            print("Scelta non valida. Riprova.")
+
+
+def select_destination_node():
+    session = driver.session()
+
+    # Retrieve the available node names and labels
+    query_get_nodes = """
+    MATCH (n)
+    RETURN DISTINCT labels(n) AS label, n.name AS name
+    """
+
+    result = session.run(query_get_nodes)
+
+    nodes = []
+    for record in result:
+        nodes.append(record)
+
     session.close()
 
-create_relationships()
+    if not nodes:
+        print("Nessun nodo disponibile nel database.")
+        exit(1)
 
-driver.close()
+    # Print the available nodes and labels
+    print("Nodi disponibili:")
+    for i, node in enumerate(nodes):
+        print(f"{i+1}. {node['name']} ({', '.join(node['label'])})")
+
+    while True:
+        choice = input("Seleziona il numero del nodo di destinazione: ")
+
+        if choice.isdigit() and 1 <= int(choice) <= len(nodes):
+            selected_node = nodes[int(choice) - 1]
+            return {"name": selected_node["name"], "label": selected_node["label"][0]}
+        else:
+            print("Scelta non valida. Riprova.")
+
+def find_paths(start_node, destination_node):
+    session = driver.session()
+
+    query_find_paths = """
+    MATCH path = (start {name: $start_node_name})-[:facile|difficile*]->(destination {name: $destination_node_name})
+    RETURN path
+    """
+
+    result = session.run(
+        query_find_paths,
+        start_node_name=start_node["name"],
+        destination_node_name=destination_node["name"]
+    )
+
+    paths = []
+    for record in result:
+        path = record["path"]
+        paths.append(path)
+
+    session.close()
+
+    return paths
+
+if __name__ == '__main__':
+    if not check_connection():
+        print("Connessione fallita al server di Neo4j.")
+        
+
+    create_relationships()
+
+    start_node = select_start_node()
+    destination_node = select_destination_node()
+
+    paths = find_paths(start_node, destination_node)
+
+    if paths:
+        print("Percorsi disponibili da", start_node["name"], "a", destination_node["name"] + ":")
+        for i, path in enumerate(paths):
+            relationships = [rel.type for rel in path.relationships]
+            print("Percorso", i + 1, ":", " -> ".join(relationships))
+    else:
+        print("Nessun percorso trovato da", start_node["name"], "a", destination_node["name"])
+
+    driver.close()
