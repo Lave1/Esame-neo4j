@@ -1,12 +1,14 @@
 from neo4j import GraphDatabase
 from Nody import create_nodes_if_not_exists
 
+# Sono le credenziali del server neo4j
 uri = "neo4j+s://ece1266a.databases.neo4j.io"
 user = "neo4j"
 password = "qPxdTyg5M_3K68J_fCWvrm6DAwxMZS8hHVxTbVGSJ94"
 
 driver = GraphDatabase.driver(uri, auth=(user, password))
 
+# Controlla la connessione al server di neo4j
 def check_connection():
     session = driver.session()
 
@@ -22,9 +24,11 @@ def check_connection():
 
 check_connection()
 
+# Richima la funzione di creazione dei nodi se non esistono
 if __name__ == '__main__':
     create_nodes_if_not_exists()
 
+# Funzione che chrea le relazioni tra i nodi
 def create_relationships():
     session = driver.session()
 
@@ -137,21 +141,11 @@ def create_relationships():
     print("Collegamento 'difficile' tra partenza 2 e picco 2 creato con informazioni aggiuntive.")
 
     
-
+# Funzione che seleziona il nodo di partenza 
 def select_start_node():
     while True:
-        choice = input("Seleziona il nodo di partenza (1 per partenza 1 o 2 per partenza 2): ")
-        if choice == "1" or choice == "2":
-            if choice == "1":
-                return {"s1": "partenza 1"}
-            else:
-                return {"s2": "partenza 2"}
-        else:
-            print("Scelta non valida. Riprova.")
 
-
-def select_start_node():
-    while True:
+        # Permette all'utente di segliere la partenza 
         choice = input("Seleziona il nodo di partenza (1 per partenza 1 o 2 per partenza 2): ")
         if choice == "1" or choice == "2":
             if choice == "1":
@@ -161,11 +155,11 @@ def select_start_node():
         else:
             print("Scelta non valida. Riprova.")
 
-
+# Funzone che permette la scelta della destiazione 
 def select_destination_node():
     session = driver.session()
 
-    # Retrieve the available node names and labels
+    # Prende i nodi 
     query_get_nodes = """
     MATCH (n)
     RETURN DISTINCT labels(n) AS label, n.name AS name
@@ -183,20 +177,24 @@ def select_destination_node():
         print("Nessun nodo disponibile nel database.")
         exit(1)
 
-    # Print the available nodes and labels
+    # Stampa i nodi selezionati
     print("Nodi disponibili:")
     for i, node in enumerate(nodes):
         print(f"{i+1}. {node['name']} ({', '.join(node['label'])})")
 
     while True:
+
+        # Permette all'utente di selezionare la destinazione
         choice = input("Seleziona il numero del nodo di destinazione: ")
 
         if choice.isdigit() and 1 <= int(choice) <= len(nodes):
             selected_node = nodes[int(choice) - 1]
             return {"name": selected_node["name"], "label": selected_node["label"][0]}
+        
         else:
             print("Scelta non valida. Riprova.")
 
+# Funzione che seleziona i percorsi in base alla partenza e la destinazione selezionata
 def find_paths(start_node, destination_node):
     session = driver.session()
 
@@ -212,6 +210,7 @@ def find_paths(start_node, destination_node):
     )
 
     paths = []
+    
     for record in result:
         path = record["path"]
         paths.append(path)
@@ -221,6 +220,7 @@ def find_paths(start_node, destination_node):
     return paths
 
 if __name__ == '__main__':
+
     if not check_connection():
         print("Connessione fallita al server di Neo4j.")
         
