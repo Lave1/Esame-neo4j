@@ -28,7 +28,7 @@ check_connection()
 if __name__ == '__main__':
     create_nodes_if_not_exists()
 
-# Funzione che chrea le relazioni tra i nodi
+# Funzione che crea le relazioni tra i nodi
 def create_relationships():
     session = driver.session()
 
@@ -155,7 +155,7 @@ def select_start_node():
         else:
             print("Scelta non valida. Riprova.")
 
-# Funzone che permette la scelta della destiazione 
+# Funzone che permette la scelta della destinazione 
 def select_destination_node():
     session = driver.session()
 
